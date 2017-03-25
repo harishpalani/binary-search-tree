@@ -73,21 +73,21 @@ BSTNode* findMin(BSTNode* root) {
 
 // Delete a node from the BST
 BSTNode* remove(BSTNode* root, int data) {
-    if (root = NULL) {
+    if (root = NULL) { // If null, there's nothing to delete
         return root;
-    } else if (data < root->data) {
+    } else if (data < root->data) { // Move left or right depending on the desired value
         root->left = remove(root->left, data);
     } else if (data > root->data) {
         root->right = remove(root->right, data);
-    } else {
-        if ((root->left == NULL) && (root->right == NULL))) {
+    } else { // data == root->data
+        if ((root->left == NULL) && (root->right == NULL))) { // If surrounded by null, delete
             delete root;
             root = NULL;
-        } else if (root->left == NULL) {
+        } else if (root->left == NULL) { // If only left is null, move root to the right & delete
             BSTNode* node = root;
             root = root->right;
             delete node;
-        } else if (root->right == NULL) {
+        } else if (root->right == NULL) { // If only right is null, move root to the left & delete
             BSTNode* node = root;
             root = root->left;
             delete node;
