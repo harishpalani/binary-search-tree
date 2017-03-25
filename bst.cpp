@@ -1,5 +1,5 @@
 #include <iostream>
-#include <vector>
+#include <iomanip>
 
 using namespace std;
 
@@ -7,7 +7,7 @@ struct BSTNode {
     int data;
     BSTNode *left;
     BSTNode *right;
-}
+};
 
 // Function prototypes
 BSTNode* create(int data);
@@ -28,22 +28,23 @@ int main() {
         cin.getline(numbers, 128);
         
         int i = 0;
-        while (list[i]) {
-            if (isdigit(list[i])) {
-                int num = list[i] - 48;
+        while (numbers[i]) {
+            if (isdigit(numbers[i])) {
+                int num = numbers[i] - 48;
                 
                 // Construct the entire number from input
-                while (isdigit(list[++index])) {
-                    num = 10*num + (list[i] - 48);
+                while (isdigit(numbers[++i])) {
+                    num = 10*num + (numbers[i] - 48);
                 }
                 
-                root.insert(num);
+                insert(root, num);
             } else {
                 i++;
             }
         }
         
         while (true) {
+            char response;
             cout << "\nChoose an option: \n1 | Print out tree\n2 | Insert a number\n3 | Remove a number\n4 | Create a new list" << endl;
             cin >> response;
             
@@ -51,17 +52,17 @@ int main() {
                 visualize(root, 0);
             } else if (response == '2') {
                 int n;
-                cout << "Number to insert: "
+                cout << "Number to insert: ";
                 cin >> n;
                 cout << endl;
-                insert(n);
+                insert(root, n);
                 visualize(root, 0);
             } else if (response == '3') {
                 int n;
-                cout << "Number to delete: "
+                cout << "Number to delete: ";
                 cin >> n;
                 cout << endl;
-                if (remove(num)) { visualize(root, 0) }
+                if (remove(root, n)) { visualize(root, 0); }
                 else { cout << "Sorry! Number could not be found." << endl; }
             } else {
                 break;
@@ -126,7 +127,7 @@ BSTNode* remove(BSTNode* root, int data) {
     } else if (data > root->data) {
         root->right = remove(root->right, data);
     } else { // data == root->data
-        if ((root->left == NULL) && (root->right == NULL))) { // If surrounded by null, delete
+        if ((root->left == NULL) && (root->right == NULL)) { // If surrounded by null, delete
             delete root;
             root = NULL;
         } else if (root->left == NULL) { // If only left is null, move root to the right & delete
