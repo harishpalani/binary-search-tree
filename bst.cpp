@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -14,14 +15,42 @@ BSTNode* insert(BSTNode* root, int data);
 bool search(BSTNode* root, int data);
 BSTNode* findMin(BSTNode* root);
 BSTNode* remove(BSTNode* root, int data);
+BSTNode* visualize(BSTNode* root, int indent);
 
 int main() {
     while (true) {
+        BSTNode* root = NULL;
+        
         // Get input through console
         char numbers[128];
-        cout << "Enter the list of numbers:" << endl;
+        cout << "Enter the list:" << endl;
         cin.ignore();
         cin.getline(numbers, 128);
+        
+        int i = 0;
+        while (list[i]) {
+            if (isdigit(list[i])) {
+                int num = list[i] - 48;
+                
+                // Construct the entire number from input
+                while (isdigit(list[++index])) {
+                    num = 10*num + (list[i] - 48);
+                }
+                
+                root.insert(num);
+            } else {
+                i++;
+            }
+        }
+        
+        while (true) {
+            cout << "\nChoose an option: \n1 | Print out tree\n2 | Insert a number\n3 | Remove a number\n4 | Create a new list" << endl;
+            cin >> response;
+            
+            if (response == '1') {
+                
+            }
+        }
     }
 }
 
@@ -99,4 +128,24 @@ BSTNode* remove(BSTNode* root, int data) {
     }
     
     return root;
+}
+
+// Visualize BST
+BSTNode* visualize(BSTNode* root, int indent) {
+    if (root != NULL) {
+        if(root->right) {
+            visualize(root->right, indent + 4);
+        }
+        if (indent) {
+            cout << setw(indent) << ' ';
+        }
+        if (root->right) {
+            cout<<" /\n" << setw(indent) << ' ';
+        }
+        std::cout<< root->data << "\n ";
+        if (root->left) {
+            cout << setw(indent) << ' ' << " \\\n";
+            visualize(root->left, indent+4);
+        }
+    }
 }
