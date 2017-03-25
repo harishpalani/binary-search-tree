@@ -48,10 +48,27 @@ int main() {
             cin >> response;
             
             if (response == '1') {
-                
+                visualize(root, 0);
+            } else if (response == '2') {
+                int n;
+                cout << "Number to insert: "
+                cin >> n;
+                cout << endl;
+                insert(n);
+                visualize(root, 0);
+            } else if (response == '3') {
+                int n;
+                cout << "Number to delete: "
+                cin >> n;
+                cout << endl;
+                if (remove(num)) { visualize(root, 0) }
+                else { cout << "Sorry! Number could not be found." << endl; }
+            } else {
+                break;
             }
         }
     }
+    return 0;
 }
 
 // Create a new BST node
