@@ -51,11 +51,11 @@ BSTNode* insert(BSTNode* root, int data) {
 
 // Search for a node in the BST
 bool search(BSTNode* root, int data) {
-    if (root = NULL) {
+    if (root = NULL) { // If null, there's nothing to search
         return false;
-    } else if (data == root->data) {
+    } else if (data == root->data) { // If current node has the desired value, return true
         return true;
-    } else if (data <= root->data) {
+    } else if (data <= root->data) { // Else, search left or right depending on the desired value
         return search(root->left, data);
     } else {
         return search(root->right, data);
@@ -64,6 +64,7 @@ bool search(BSTNode* root, int data) {
 
 // Find the smallest node in BST
 BSTNode* findMin(BSTNode* root) {
+    // Move left until you find the left-most node
     while (root->left != NULL) {
         root = root->left;
     }
@@ -72,5 +73,30 @@ BSTNode* findMin(BSTNode* root) {
 
 // Delete a node from the BST
 BSTNode* remove(BSTNode* root, int data) {
+    if (root = NULL) {
+        return root;
+    } else if (data < root->data) {
+        root->left = remove(root->left, data);
+    } else if (data > root->data) {
+        root->right = remove(root->right, data);
+    } else {
+        if ((root->left == NULL) && (root->right == NULL))) {
+            delete root;
+            root = NULL;
+        } else if (root->left == NULL) {
+            BSTNode* node = root;
+            root = root->right;
+            delete node;
+        } else if (root->right == NULL) {
+            BSTNode* node = root;
+            root = root->left;
+            delete node;
+        } else {
+            BSTNode* min = findMin(root->right);
+            root->data = min->data;
+            root->right = remove(root->right, min->data);
+        }
+    }
     
+    return root;
 }
