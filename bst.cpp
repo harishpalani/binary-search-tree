@@ -15,9 +15,10 @@ struct BSTNode {
 BSTNode* create(int data);
 BSTNode* insert(BSTNode* root, int data);
 bool search(BSTNode* root, int data);
-BSTNode* findMin(BSTNode* root);
-BSTNode* remove(BSTNode* root, int data);
+bool remove(BSTNode* &root, int data);
 void visualize(BSTNode* root, int spaces);
+BSTNode* findMin(BSTNode* root);
+bool removalHelper(BSTNode* curr, int data);
 
 int main() {
     cout << "Binary Search Tree" << "\n" << "Created by Harish Palani, March 2017" << "\n" << endl;
@@ -100,7 +101,7 @@ BSTNode* insert(BSTNode* root, int data) {
 bool search(BSTNode* root, int data) {
     if (root == NULL) { // If null, there's nothing to search
         return false;
-    } else if (data == root->data) { // If current node has the desired value, return true
+    } else if (data == root->data) { // If curr node has the desired value, return true
         return true;
     } else if (data <= root->data) { // Else, search left or right depending on the desired value
         return search(root->left, data);
@@ -109,42 +110,40 @@ bool search(BSTNode* root, int data) {
     }
 }
 
-// Find the smallest node in BST
-BSTNode* findMin(BSTNode* root) {
-    // Move left until you find the left-most node
-    while (root->left != NULL) {
-        root = root->left;
-    }
-    return root;
-}
-
 // Delete a node from the BST
-BSTNode* remove(BSTNode* root, int data) {
-    if (root == NULL) { // If null, there's nothing to delete
-        return root;
-    } else if (data < root->data) { // Move left or right depending on the desired value
-        root->left = remove(root->left, data);
-    } else if (data > root->data) {
-        root->right = remove(root->right, data);
-    } else { // data == root->data
+bool remove(BSTNode* &root, int data) {
+    if (root == NULL) { return false; } // If null, there's nothing to delete
+    if (root->data == data) {
+        BSTNode* node;
         if (root->left == NULL && root->right == NULL) { // If surrounded by null, delete
             delete root;
             root = NULL;
         } else if (root->left == NULL) { // If only left is null, move root to the right & delete
-            BSTNode* temp = root;
-            root = root->right;
-            delete temp;
+            node = root->right;
+            delete root;
+            root = node;
         } else if (root->right == NULL) { // If only right is null, move root to the left & delete
-            BSTNode* temp = root;
-            root = root->left;
-            delete temp;
-        } else {
-            BSTNode* min = findMin(root->right);
-            root->data = min->data;
-            root->right = remove(root->right, min->data);
+            node = root->left;
+            delete root;
+            root = node;
+        } else { // If neither is null, move root to the left
+            node = root->left;
+            if (node->right == NULL) {
+                node->right = root->right;
+                delete root;
+                root = node;
+            } else {
+                while (node->right != NULL) { node = node->right; }
+                int rootData = node->data;
+                node->data = data;
+                removalHelper(root->left, data);
+                root->data = rootData;
+            }
         }
+        return true;
+    } else {
+        return removalHelper(root, data);
     }
-    return root;
 }
 
 // Visualize BST (sideways tree)
@@ -158,10 +157,93 @@ void visualize(BSTNode* root, int spaces) {
     // Right child
     visualize(root->right, spaces);
  
-    // Print space + current node
+    // Print space + curr node
     for (int i = c; i < spaces; i++) { printf(" "); }
     printf("%d\n", root->data);
  
     // Left child
     visualize(root->left, spaces);
+}
+
+// Find the smallest node in BST
+BSTNode* findMin(BSTNode* root) {
+    // Move left until you find the left-most node
+    while (root->left != NULL) {
+        root = root->left;
+    }
+    return root;
+}
+
+// Recursive helper for removal
+bool removalHelper(BSTNode* curr, int data) {
+    BSTNode* node;
+    if (curr->data <= data) {
+        if (curr->right == NULL) { return false; }
+        if (curr->right->data == data) {
+            if (curr->right->left != NULL && curr->right->right != NULL) {
+                node = curr->right->left;
+                if (node->right == NULL) {
+                    node->right = curr->right->right;
+                    delete curr->right;
+                    curr->right = node;
+                } else {
+                    while (node->right != NULL) {
+                        node = node->right;
+                    }
+                    int newData = node->data;
+                    node->data = data;
+                    removalHelper(curr->right->left, data);
+                    curr->right->data = newData;
+                }
+                return true;
+            } else if (curr->right->left != NULL && curr->right->right == NULL) {
+                node = curr->right->left;
+                delete curr->right;
+                curr->right = node;
+                return true;
+            } else if (curr->right->left == NULL && curr->right->right != NULL) {
+                node = curr->right->right;
+                delete curr->right;
+                curr->right = node;
+                return true;
+            } else if (curr->right->left == NULL && curr->right->right == NULL) {
+                delete curr->right;
+                curr->right = NULL;
+                return true;
+            }
+        } else { return removalHelper(curr->right, data); }
+    } else {
+        if (curr->left == NULL) { return false; }
+        if (curr->left->data == data) {
+            if (curr->left->left != NULL && curr->left->right != NULL) {
+                node = curr->left->left;
+                if (node->right == NULL) {
+                    node->right = curr->left->right;
+                    delete curr->left;
+                    curr->left = node;
+                } else {
+                    while (node->right != NULL) { node=node->right; }
+                    int newData=node->data;
+                    node->data = data;
+                    removalHelper(curr->left->left, data);
+                    curr->left->data = newData;
+                }
+                return true;
+            } else if (curr->left->left != NULL && curr->left->right == NULL) {
+                node = curr->left->left;
+                delete curr->left;
+                curr->left = node;
+                return true;
+            } else if (curr->left->right == NULL && curr->left->right != NULL) {
+                node = curr->left->right;
+                delete curr->left;
+                curr->left = node;
+                return true;
+            } else if (curr->left->left == NULL && curr->left->right == NULL) {
+                delete curr->left;
+                curr->left = NULL;
+                return true;
+            }
+        } else { return removalHelper(curr->left, data); }
+    }
 }
