@@ -180,7 +180,21 @@ bool removalHelper(BSTNode* curr, int data) {
     if (curr->data <= data) {
         if (curr->right == NULL) { return false; }
         if (curr->right->data == data) {
-            if (curr->right->left != NULL && curr->right->right != NULL) {
+            if (curr->right->left == NULL && curr->right->right == NULL) {
+                delete curr->right;
+                curr->right = NULL;
+                return true;
+            } else if (curr->right->right == NULL) {
+                node = curr->right->left;
+                delete curr->right;
+                curr->right = node;
+                return true;
+            } else if (curr->right->left == NULL) {
+                node = curr->right->right;
+                delete curr->right;
+                curr->right = node;
+                return true;
+            } else { // Neither are NULL
                 node = curr->right->left;
                 if (node->right == NULL) {
                     node->right = curr->right->right;
@@ -190,58 +204,44 @@ bool removalHelper(BSTNode* curr, int data) {
                     while (node->right != NULL) {
                         node = node->right;
                     }
-                    int newData = node->data;
+                    int nodeData = node->data;
                     node->data = data;
                     removalHelper(curr->right->left, data);
-                    curr->right->data = newData;
+                    curr->right->data = nodeData;
                 }
-                return true;
-            } else if (curr->right->left != NULL && curr->right->right == NULL) {
-                node = curr->right->left;
-                delete curr->right;
-                curr->right = node;
-                return true;
-            } else if (curr->right->left == NULL && curr->right->right != NULL) {
-                node = curr->right->right;
-                delete curr->right;
-                curr->right = node;
-                return true;
-            } else if (curr->right->left == NULL && curr->right->right == NULL) {
-                delete curr->right;
-                curr->right = NULL;
                 return true;
             }
         } else { return removalHelper(curr->right, data); }
     } else {
         if (curr->left == NULL) { return false; }
         if (curr->left->data == data) {
-            if (curr->left->left != NULL && curr->left->right != NULL) {
+            if (curr->left->left == NULL && curr->left->right == NULL) {
+                delete curr->left;
+                curr->left = NULL;
+                return true;
+            } else if (curr->left->right == NULL) {
+                node = curr->left->left;
+                delete curr->left;
+                curr->left = node;
+                return true;
+            } else if (curr->left->left == NULL) {
+                node = curr->left->right;
+                delete curr->left;
+                curr->left = node;
+                return true;
+            } else { // Neither are NULL
                 node = curr->left->left;
                 if (node->right == NULL) {
                     node->right = curr->left->right;
                     delete curr->left;
                     curr->left = node;
                 } else {
-                    while (node->right != NULL) { node=node->right; }
-                    int newData=node->data;
+                    while (node->right != NULL) { node = node->right; }
+                    int nodeData = node->data;
                     node->data = data;
                     removalHelper(curr->left->left, data);
-                    curr->left->data = newData;
+                    curr->left->data = nodeData;
                 }
-                return true;
-            } else if (curr->left->left != NULL && curr->left->right == NULL) {
-                node = curr->left->left;
-                delete curr->left;
-                curr->left = node;
-                return true;
-            } else if (curr->left->right == NULL && curr->left->right != NULL) {
-                node = curr->left->right;
-                delete curr->left;
-                curr->left = node;
-                return true;
-            } else if (curr->left->left == NULL && curr->left->right == NULL) {
-                delete curr->left;
-                curr->left = NULL;
                 return true;
             }
         } else { return removalHelper(curr->left, data); }
